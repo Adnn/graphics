@@ -77,10 +77,18 @@ void handleCompilationError(GLuint aObjectId, ShaderSourceView aSource)
             std::getline(log, errorLine); // following getline calls are in the inner while
             while(!errorLine.empty())
             {
+#ifdef _MSVC_LANG
                 auto left = errorLine.find("(");
                 auto right = errorLine.find(")");
                 int column = std::stoi(errorLine.substr(0, left));    
                 int line = std::stoi(errorLine.substr(left + 1, right - left));    
+#else
+                auto left = errorLine.find(":");
+                auto right = errorLine.find("(");
+                auto endCol = errorLine.find(")");
+                int column = std::stoi(errorLine.substr(right + 1, endCol - right));    
+                int line = std::stoi(errorLine.substr(left + 1, right - left));    
+#endif
                 assert(line > 0);
 
                 // Assemble error message with the current body, 
