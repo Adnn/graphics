@@ -30,17 +30,17 @@ namespace {
             margins{aMargins}
         {}
 
-        Texture texture;
-        GLint width{0};
-        math::Vec<2, GLint> margins;
-        GLint nextXOffset{0}; // The left margin before the first glyph will be added by  write()
-
         GLint isFitting(GLint aCandidateWidth)
         { return aCandidateWidth <= (width - nextXOffset); }
 
         /// @brief Write the raw bitmap `aData` to the ribon.
         /// @return The horizontal offset to the written data.
         GLint write(const std::byte * aData, InputImageParameters aInputParameters);
+
+        Texture texture;
+        GLint width{0};
+        math::Vec<2, GLint> margins;
+        GLint nextXOffset{0}; // The left margin before the first glyph will be added by  write()
     };
 
 
@@ -48,16 +48,16 @@ namespace {
     // Note: Nearest currently has a drawback that all letters of a string do not necessarily advance a pixel together.
     inline TextureRibon make_TextureRibon(math::Size<2, GLint> aDimensions, GLenum aInternalFormat, math::Vec<2, GLint> aMargins, GLenum aTextureFiltering)
     {
-        TextureRibon ribon{Texture{GL_TEXTURE_RECTANGLE}, aDimensions.width(), aMargins};
+        TextureRibon ribon{Texture{gGlyphAtlasTarget}, aDimensions.width(), aMargins};
         allocateStorage(ribon.texture, aInternalFormat, aDimensions.width(), aDimensions.height());
         // Note: Only the first (red) value will be used for a GL_R8 texture, but the API requires a 4-channel color.
         clear(ribon.texture, {math::hdr::gBlack<GLfloat>, 0.f});
 
         bind(ribon.texture);
-        glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, aTextureFiltering);
-        glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, aTextureFiltering);
-        glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(gGlyphAtlasTarget, GL_TEXTURE_MIN_FILTER, aTextureFiltering);
+        glTexParameteri(gGlyphAtlasTarget, GL_TEXTURE_MAG_FILTER, aTextureFiltering);
+        glTexParameteri(gGlyphAtlasTarget, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(gGlyphAtlasTarget, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
         return ribon;
     }
@@ -133,9 +133,11 @@ Texture makeTightGlyphAtlas(const arte::FontFace & aFontFace,
             ribon.write( reinterpret_cast<const std::byte *>(bitmap.buffer), inputParams);
 
         RenderedGlyph rendered{
+            // TODO Ad 2024/11/15: #UB THIS IS PLAIN WRONG
+            // The ribon is local to the function, and its texture is allocated on the stack frame
             .texture = &ribon.texture,
             .offsetInTexture = horizontalOffset,
-            // See DynamicGlyphCache::at() for the ratrionale
+            // See DynamicGlyphCache::at() for the rationale
             // behind the addition
             .controlBoxSize = {
                 static_cast<float>(slot->bitmap.width) + 2 * aMargins.x(),

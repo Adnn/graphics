@@ -20,6 +20,8 @@ namespace graphics {
 
 constexpr math::Vec<2, GLint> gRecommendedGlyphAtlasMargins{1, 1};
 
+constexpr GLenum gGlyphAtlasTarget = GL_TEXTURE_RECTANGLE;
+
 
 /// @brief  POD type used as argument to the GlyphCallback argument of `makeTightGlyphAtlas()`.
 struct RenderedGlyph
