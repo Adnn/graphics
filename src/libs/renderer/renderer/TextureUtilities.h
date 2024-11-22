@@ -39,7 +39,7 @@ void serializeTexture(const graphics::Texture & aTexture,
     // for < 4 components image with a width that is not a multiple of 4.
     // The easy solution is to always require 1-byte alignment 
     // (even when it gives the same results than 4-bytes alignment)
-    auto packAlignmentGuard = detail::scopePackAlignment(1);
+    auto packAlignmentGuard = scopePackAlignment(1);
 
     std::unique_ptr<unsigned char[]> raster = 
         std::make_unique<unsigned char[]>(sizeof(T_Pixel) * size.area());
@@ -96,7 +96,7 @@ inline void writeTo(const Texture & aTexture,
     ScopedBind bound(aTexture);
 
     // Handle alignment
-    Guard scopedAlignemnt = detail::scopeUnpackAlignment(aInput.alignment);
+    Guard scopedAlignemnt = scopeUnpackAlignment(aInput.alignment);
 
     glTexSubImage2D(aTexture.mTarget, aMipmapLevelId,
                     aTextureOffset.x(), aTextureOffset.y(),
@@ -118,7 +118,7 @@ inline void writeTo(const Texture & aTexture,
     ScopedBind bound(aTexture);
 
     // Handle alignment
-    Guard scopedAlignemnt = detail::scopeUnpackAlignment(aInput.alignment);
+    Guard scopedAlignemnt = scopeUnpackAlignment(aInput.alignment);
 
     glTexSubImage3D(aTexture.mTarget, aMipmapLevelId,
                     aTextureOffset.x(), aTextureOffset.y(), aTextureOffset.z(),
@@ -175,7 +175,7 @@ inline void loadAnimationAsArray(const Texture & aTexture,
 
     ScopedBind bound(aTexture);
 
-    Guard scopedAlignemnt = detail::scopeUnpackAlignment(aImage.rowAlignment());
+    Guard scopedAlignemnt = scopeUnpackAlignment(aImage.rowAlignment());
 
     glTexImage3D(aTexture.mTarget, 0, GL_RGBA,
                  aFrame.width(), aFrame.height(), static_cast<GLsizei>(aSteps),

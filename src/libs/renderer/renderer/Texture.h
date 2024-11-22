@@ -17,9 +17,6 @@
 namespace ad {
 namespace graphics {
 
-// TODO: take out of detail namespace, this is useful to clients
-namespace detail {
-
 
 inline Guard scopePixelStorageMode(GLenum aParameter, GLint aValue)
 {
@@ -43,9 +40,6 @@ inline Guard scopePackAlignment(GLint aAlignment)
 {
     return scopePixelStorageMode(GL_PACK_ALIGNMENT, aAlignment);
 }
-
-
-} // namespace detail
 
 
 // Note: alternatively to hosting the target in a data member (and specializing Name for Texture),
