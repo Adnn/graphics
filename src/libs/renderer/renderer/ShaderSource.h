@@ -1,6 +1,8 @@
 #pragma once
 
 
+#include "commons.h"
+
 #include <filesystem>
 #include <functional>
 #include <span>
@@ -58,7 +60,7 @@ public:
     using Lookup = std::function<
         std::pair<std::unique_ptr<std::istream>, std::string/*identifier*/>(const std::string &)>;
     
-    using Defines = std::span<const std::string>;
+    using Defines = std::span<const MacroDefine>;
 
     static ShaderSource Preprocess(std::istream & aIn,
                                    const Defines & aMacros,

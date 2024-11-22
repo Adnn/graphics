@@ -3,10 +3,15 @@
 #include <math/Rectangle.h>
 #include <math/Vector.h>
 
+
 namespace ad {
 namespace graphics {
 
 
+using MacroDefine = std::string;
+
+
+// TODO Ad 2024/11/21: Remove those aliases below
 template <class T_number>
 using Rectangle=math::Rectangle<T_number>;
 
