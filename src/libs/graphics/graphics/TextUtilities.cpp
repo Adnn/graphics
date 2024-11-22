@@ -1,6 +1,8 @@
 
 #include "TextUtilities.h"
 
+#include <renderer/TextureUtilities.h>
+
 
 namespace ad {
 namespace graphics {

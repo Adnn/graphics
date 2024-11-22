@@ -16,6 +16,7 @@
 
 #include <renderer/Drawing.h>
 #include <renderer/Texture.h>
+#include <renderer/TextureUtilities.h>
 #include <renderer/Uniforms.h>
 
 #include <math/Homogeneous.h>

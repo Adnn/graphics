@@ -11,6 +11,7 @@
 #include <renderer/FrameBuffer.h>
 #include <renderer/Shading.h>
 #include <renderer/Texture.h>
+#include <renderer/TextureUtilities.h>
 #include <renderer/VertexSpecification.h>
 
 #include <test_commons/PathProvider.h>

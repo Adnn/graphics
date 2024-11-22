@@ -21,6 +21,7 @@ set(${TARGET_NAME}_HEADERS
     Shading.h
     SynchronousQueries.h
     Texture.h
+    TextureUtilities.h
     UniformBuffer.h
     Uniforms.h
     VertexSpecification.h

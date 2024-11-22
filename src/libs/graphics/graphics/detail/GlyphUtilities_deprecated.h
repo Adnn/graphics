@@ -6,6 +6,7 @@
 #include <math/Vector.h>
 
 #include <renderer/Texture.h>
+#include <renderer/TextureUtilities.h>
 
 #include <glad/glad.h>
 

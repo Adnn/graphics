@@ -4,6 +4,7 @@
 #include "Sprite.h"
 
 #include <renderer/Texture.h>
+#include <renderer/TextureUtilities.h>
 
 
 namespace ad {
