@@ -2,17 +2,27 @@
 
 #include "ft2build.h"
 
+#include "Logging.h"
+
 #include <handy/Guard.h>
 #include <math/Vector.h>
 #include <platform/Filesystem.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H // For bbox measurements
+#include FT_MODULE_H // For FT_Property_Set
 
 #include <exception>
 #include <iostream>
 
 namespace ad {
 namespace arte {
+
+
+// The SDF spread used in FreeType sdf renderer.
+// It means the distance, in texels from the edge (==128) to extreme values.
+// see: https://freetype.org/freetype2/docs/reference/ft2-properties.html#spread
+constexpr unsigned int gSdfSpread = 8;
+
 
 #define GENERIC_LOGICERROR(fterror)                                            \
     std::logic_error                                                           \
@@ -43,6 +53,10 @@ private:
         {
             throw std::runtime_error{"Unable to initialize freetype, error: "
                                      + std::to_string(error)};
+        }
+        if(FT_Property_Set(library, "sdf", "spread", &gSdfSpread))
+        {
+            ADLOG(gMainLogger, error)("Unable to set the spread of FreeType sdf renderer.");
         }
         return library;
     }
