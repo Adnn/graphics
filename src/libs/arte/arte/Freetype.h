@@ -71,6 +71,11 @@ public:
         ResourceGuard<FT_Face>{initialize(aLibrary, aFontPath), &FT_Done_Face}
     {}
 
+    const char * getName() const
+    {
+        return this->get()->family_name;
+    }
+
     FontFace & inverseYAxis(bool aInverse)
     {
         static FT_Matrix inversion{1 << 16, 0, 0, -(1 << 16)};
