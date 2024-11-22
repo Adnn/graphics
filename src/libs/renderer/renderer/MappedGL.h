@@ -87,6 +87,7 @@ struct MappedPixel;
 template <class T_pixel>
 constexpr GLenum MappedPixel_v = MappedPixel<T_pixel>::enumerator;
 
+MAP(MappedPixel, math::sdr::Grayscale, GL_RED);
 MAP(MappedPixel, math::sdr::Rgb, GL_RGB);
 MAP(MappedPixel, math::sdr::Rgba, GL_RGBA);
 MAP(MappedPixel, math::hdr::Rgb_f, GL_RGB);
@@ -103,6 +104,7 @@ struct MappedSizedPixel_r;
 template <GLuint N_typeEnum>
 using PixelFromInternalFormat_t = typename MappedSizedPixel_r<N_typeEnum>::type;
 
+MAP_AND_REVERSE(MappedSizedPixel, math::sdr::Grayscale, GL_R8);
 MAP_AND_REVERSE(MappedSizedPixel, math::sdr::Rgb, GL_RGB8);
 MAP_AND_REVERSE(MappedSizedPixel, math::sdr::Rgba, GL_RGBA8);
 // Note: It seems the RGBE (.hdr) image format, often used to load Image<Rgb_f>
@@ -117,9 +119,10 @@ struct MappedPixelComponentType;
 template <class T_pixel>
 constexpr GLenum MappedPixelComponentType_v = MappedPixelComponentType<T_pixel>::enumerator;
 
-MAP(MappedPixelComponentType, math::sdr::Rgb,   GL_UNSIGNED_BYTE);
-MAP(MappedPixelComponentType, math::sdr::Rgba,  GL_UNSIGNED_BYTE);
-MAP(MappedPixelComponentType, math::hdr::Rgb_f, GL_FLOAT);
+MAP(MappedPixelComponentType, math::sdr::Grayscale, GL_UNSIGNED_BYTE);
+MAP(MappedPixelComponentType, math::sdr::Rgb,       GL_UNSIGNED_BYTE);
+MAP(MappedPixelComponentType, math::sdr::Rgba,      GL_UNSIGNED_BYTE);
+MAP(MappedPixelComponentType, math::hdr::Rgb_f,     GL_FLOAT);
 
 constexpr GLuint getPixelFormatBitSize(GLenum aSizedInternalFormat) 
 {

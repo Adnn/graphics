@@ -134,6 +134,11 @@ void Image<math::sdr::Grayscale>::write(ImageFormat aFormat, std::ostream & aOut
 {
     switch(aFormat)
     {
+    case ImageFormat::Bmp:
+    case ImageFormat::Jpg:
+    case ImageFormat::Png:
+        detail::StbImageFormats::Write<pixel_format_t>(aOut, *this, aFormat, aOrientation);
+        break;
     case ImageFormat::Pgm:
         detail::Netpbm<detail::NetpbmFormat::Pgm>::Write(aOut, *this, aOrientation);
         break;
@@ -173,11 +178,9 @@ Image<math::sdr::Rgba> Image<math::sdr::Rgba>::Read(ImageFormat aFormat,
     switch(aFormat)
     {
     case ImageFormat::Bmp:
-        return detail::StbImageFormats::Read<math::sdr::Rgba>(aIn, aOrientation);
     case ImageFormat::Jpg:
-        return detail::StbImageFormats::Read<math::sdr::Rgba>(aIn, aOrientation);
     case ImageFormat::Png:
-        return detail::StbImageFormats::Read<math::sdr::Rgba>(aIn, aOrientation);
+        return detail::StbImageFormats::Read<pixel_format_t>(aIn, aOrientation);
     default:
         throw std::runtime_error{"Unsupported read format to produce and RGBA image: "
                                  + to_string(aFormat)};
@@ -194,6 +197,10 @@ Image<math::sdr::Grayscale> Image<math::sdr::Grayscale>::Read(ImageFormat aForma
     {
     case ImageFormat::Pgm:
         return detail::Netpbm<detail::NetpbmFormat::Pgm>::Read(aIn, aOrientation);
+    case ImageFormat::Bmp:
+    case ImageFormat::Jpg:
+    case ImageFormat::Png:
+        return detail::StbImageFormats::Read<pixel_format_t>(aIn, aOrientation);
     default:
         throw std::runtime_error{"Unsupported read format for grayscale image: "
                                  + to_string(aFormat)};

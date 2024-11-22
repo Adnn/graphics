@@ -22,6 +22,14 @@ struct stbi_traits;
 
 
 template <>
+struct stbi_traits<math::sdr::Grayscale>
+{
+    static constexpr int channels = STBI_grey;
+    static constexpr auto loadFromCallbacks = &stbi_load_from_callbacks;
+};
+
+
+template <>
 struct stbi_traits<math::sdr::Rgb>
 {
     static constexpr int channels = STBI_rgb;
@@ -97,7 +105,9 @@ struct StbImageFormats
             &channelsInFile,
             stbi_traits<T_pixel>::channels);
 
-        assert(channelsInFile >= 3);
+        // Note: there are probably valid situtations where those will not match
+        // handle the cases when they show up.
+        assert(channelsInFile == stbi_traits<T_pixel>::channels);
 
         // HDR CASE
         // IMPORTANT: even though it returns a float*, stbi_loadf internally allocates
