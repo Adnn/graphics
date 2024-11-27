@@ -94,22 +94,39 @@ Texture makeTightGlyphAtlas(const arte::FontFace & aFontFace,
     // Compute the atlas dimension
     //
     math::Size<2, GLint> atlasDimensions{0, 0};
+
+    auto insertGlyph = [&](FT_ULong aCharcode)
+    {
+        FT_GlyphSlot slot = aFontFace.loadChar(
+            aCharcode, FT_LOAD_RENDER | FT_LOAD_TARGET_(FT_RENDER_MODE_SDF));
+        // Note: The glyph metrics available in FT_GlyphSlot are not
+        // available in FT_Glyph so we store them now... see:
+        // https://lists.gnu.org/archive/html/freetype/2010-09/msg00036.html
+        glyphs.push_back(aCharcode);
+        math::Size<2, int> glyphSize{
+            static_cast<int>(slot->bitmap.width) + 2 * aMargins.x(),
+            static_cast<int>(slot->bitmap.rows) + 2 * aMargins.y()};
+        atlasDimensions.width() += glyphSize.width();
+        atlasDimensions.height() =
+            std::max(atlasDimensions.height(), glyphSize.height());
+    };
+
+    // TODO Ad 2024/11/27: #text Rework this approach so it does not duplicate characters.
+    // When a font does not contain a charcode we pick a filler charcode to use in its place.
+    // This is because we expect the callback to be called for each charcode in the interval.
+    // Currently this is too naïve, duplicating the filler charcode at each missing charcode in 
+    // the atlas (which is why we use the whitespace atm).
     for (; aFirst != aLast; ++aFirst)
     {
         if (aFontFace.hasGlyph(aFirst))
         {
-            FT_GlyphSlot slot = aFontFace.loadChar(
-                aFirst, FT_LOAD_RENDER | FT_LOAD_TARGET_(FT_RENDER_MODE_SDF));
-            // Note: The glyph metrics available in FT_GlyphSlot are not
-            // available in FT_Glyph so we store them now... see:
-            // https://lists.gnu.org/archive/html/freetype/2010-09/msg00036.html
-            glyphs.push_back(aFirst);
-            math::Size<2, int> glyphSize{
-                static_cast<int>(slot->bitmap.width) + 2 * aMargins.x(),
-                static_cast<int>(slot->bitmap.rows) + 2 * aMargins.y()};
-            atlasDimensions.width() += glyphSize.width();
-            atlasDimensions.height() =
-                std::max(atlasDimensions.height(), glyphSize.height());
+            insertGlyph(aFirst);
+        }
+        else
+        {
+            constexpr FT_ULong fillerCharcode = 0x20; // white space, which usually takes no room.
+            assert(aFontFace.hasGlyph(fillerCharcode));
+            insertGlyph(fillerCharcode);
         }
     }
 

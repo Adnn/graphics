@@ -68,6 +68,9 @@ public:
                                        const arte::FontFace & aFontFace)
     { return advance(aGlyph.penAdvance, aGlyph.freetypeIndex, aFontFace); }
 
+    inline math::Position<2, GLfloat> getPosition() const
+    { return mLocalPenPosition; }
+
 private:
     std::optional<unsigned int> mPreviousFreetypeIndex;
     math::Position<2, GLfloat> mLocalPenPosition;
